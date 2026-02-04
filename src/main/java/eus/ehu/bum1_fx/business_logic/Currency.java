@@ -1,4 +1,4 @@
-package eus.ehu.bum1_fx;
+package eus.ehu.bum1_fx.business_logic;
 
 /**
  * An example of the usefulness of enum Java types.

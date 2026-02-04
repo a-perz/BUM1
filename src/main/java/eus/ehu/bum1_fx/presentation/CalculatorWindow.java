@@ -1,11 +1,11 @@
-package eus.ehu.bum1_fx;
+package eus.ehu.bum1_fx.presentation;
+
+import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class CalculatorWindow extends Application {
     @Override
