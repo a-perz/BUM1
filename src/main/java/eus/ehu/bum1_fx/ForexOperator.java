@@ -35,31 +35,46 @@ public class ForexOperator {
 	 */
 	public double getChangeValue() throws Exception {
 
-		String urlText = "https://currencyconvert.online/" + sourceCurrency.toLowerCase()
-		+ "/" + endCurrency.toLowerCase() + "/" + 
-		// remove the .0 when the number is a whole number
-		(amount % 1 == 0 ? String.format("%.0f", amount) : String.valueOf(amount));
+		//build URL 
+		String urlText = "https://currencyconvert.online/" //default
+			+ sourceCurrency.toLowerCase() 				// https://currencyconvert.online/EUR
+			+ "/" + endCurrency.toLowerCase() 			// https://currencyconvert.online/EUR/USD
+			+ "/" 										// https://currencyconvert.online/EUR/USD/
+			// remove the .0 when it's whole number
+			+ (amount % 1 == 0 
+				? String.format("%.0f", amount) 
+				: String.valueOf(amount) 				// https://currencyconvert.online/EUR/USD/10
+			);
 
-		OkHttpClient client = new OkHttpClient.Builder()
-				.followRedirects(true)
-				.build();
+		//create a HTTP client
+		OkHttpClient client = new OkHttpClient.Builder() //connects to the internet
+				.followRedirects(true) //if the websites redirects me -> follow automatically
+				.build(); //done configuring, create object
 				
+		//create the HTTP request
 		Request request = new Request.Builder()
-				.url(urlText)
-				.header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36")
-				.build();
+				.url(urlText) //URL= https://currencyconvert.online/EUR/USD/10
+				.header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36") //for the Java program to deisguise (i'm a normal browser, don't block me)
+				.build(); //done configuring, create object		
 				
-		try (Response response = client.newCall(request).execute()) {
-			String responseBody = response.body().string();
-			double sol = -1.0;
+		//send the request & get response
+		try (Response response = client.newCall(request).execute()) { 
+			//opens a connection -> sends HTTP request -> waits for the server -> receives response -> automatically closes connection
+			String responseBody = response.body().string(); //read the web page as plain text (responseBody = entire HTML)
+			double sol = -1.0; //if page !downloaded / is wrong
 			
-			for (String line : responseBody.split("\n")) {
-				if (line.startsWith("Amount in words")) {
-					int pos0 = line.indexOf("? — ") + 4;
-					while (line.charAt(pos0) < '0' || line.charAt(pos0) > '9')
-						pos0++;
-					int pos1 = line.indexOf(' ', pos0);
-					sol = Double.parseDouble(line.substring(pos0, pos1));
+			//search for the line with the number (conversion)  EXAMPLE: Amount in words? — approximately 123.45 US dollars
+			for (String line : responseBody.split("\n")) { //split HTML into lines (cut big string into smaller strings every time there's a new line ("\n") )
+				
+				if (line.startsWith("Amount in words")) { //look for the line that starts with "Amount in words"
+					
+					int pos0 = line.indexOf("? — ") + 4; //find approximate staring point: searches for the first occurrence of "? - " & skips it (+4)
+						
+						while (line.charAt(pos0) < '0' || line.charAt(pos0) > '9') //skip non-numeric chars
+							pos0++;
+						//pos0 => first digit of the number 
+					int pos1 = line.indexOf(' ', pos0); //find wehre the number ends (starts from pos0 & finds the first space (' ') )
+					sol = Double.parseDouble(line.substring(pos0, pos1)); //extract and convert the number to double
 					break;
 				}
 			}
