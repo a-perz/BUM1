@@ -72,7 +72,7 @@ public class CalculatorController {
                 
                 } else {
                     try {
-                        double destAmount = bizLogic.getChangeValue(endCurrency, origAmount, endCurrency);
+                        double destAmount = bizLogic.getChangeValue(origCurrency, origAmount, endCurrency);
                    
                         NumberFormat twoDecimal = NumberFormat.getNumberInstance(Locale.US);
                         twoDecimal.setMaximumFractionDigits(2);

@@ -32,8 +32,7 @@ public class CalculatorStarter {
 		Scanner input = new Scanner(System.in);
 		input.useLocale(Locale.ENGLISH);
 
-		System.out.println("\nWelcome to BARCENAYS CAPITAL. This is our "
-				+ "Currency Exchange Calculator Service.");
+		System.out.println("\nWelcome to BARCENAYS CAPITAL. This is our Currency Exchange Calculator Service.");
 		System.out.println("We will offer you the best exchange rates "
 				+ "at a very moderate commission fee.");
 
