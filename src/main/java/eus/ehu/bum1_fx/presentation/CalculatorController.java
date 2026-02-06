@@ -4,10 +4,8 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import eus.ehu.bum1_fx.business_logic.CommissionCalculator;
-import eus.ehu.bum1_fx.business_logic.Currency;
+import eus.ehu.bum1_fx.business_logic.BarcenaysCalculator;
 import eus.ehu.bum1_fx.business_logic.ExchangeCalculator;
-import eus.ehu.bum1_fx.business_logic.ForexOperator;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,18 +33,20 @@ public class CalculatorController {
         @FXML
         private ComboBox<String> toComboBox;
 
-        //have an attribute bizLogic of type ExchangeCalculator (our new Interface). 
-        @FXML
-        private ExchangeCalculator bizLogic;
+        //from the inteface (exterior)
+        public ExchangeCalculator bizLogic;
 
 
         @FXML
         void initialize() {
+            //initialize the business logic facade (exterior) used by the controller
+            this.bizLogic = new BarcenaysCalculator();
+
             // initialize toComboBox
-            fromComboBox.setItems(FXCollections.observableArrayList(Currency.longNames()));
+            fromComboBox.setItems(FXCollections.observableArrayList(bizLogic.getCurrencyLongNames()));
 
             // initialize fromComboBox
-            toComboBox.setItems(FXCollections.observableArrayList(Currency.longNames()));
+            toComboBox.setItems(FXCollections.observableArrayList(bizLogic.getCurrencyLongNames()));
 
             result.setBackground(new Background(
                     new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -69,14 +69,11 @@ public class CalculatorController {
 					   won't provide a result */
                 if (origCurrency.equals(endCurrency)) {
                     result.setText("Please select different currencies");
+                
                 } else {
-                    ForexOperator operator = new ForexOperator(origCurrency,
-                            origAmount, endCurrency);
                     try {
-                        double destAmount = operator.getChangeValue();
-                        CommissionCalculator calculator = new CommissionCalculator(destAmount,
-                                endCurrency);
-                        destAmount -= calculator.calculateCommission();
+                        double destAmount = bizLogic.getChangeValue(endCurrency, origAmount, endCurrency);
+                   
                         NumberFormat twoDecimal = NumberFormat.getNumberInstance(Locale.US);
                         twoDecimal.setMaximumFractionDigits(2);
                         twoDecimal.setRoundingMode(RoundingMode.FLOOR);
@@ -91,10 +88,10 @@ public class CalculatorController {
                         result.setText("Conversion could not be done");
                     }
                 }
+           
             } catch (NumberFormatException e2) {
                 result.setText("Please introduce a valid amount");
             }
         }
-
 
 }

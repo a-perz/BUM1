@@ -6,6 +6,6 @@ module eus.ehu.bum1_fx {
     requires java.desktop;
     requires okhttp3;
 
-    opens eus.ehu.bum1_fx to javafx.fxml;
-    exports eus.ehu.bum1_fx;
+    opens eus.ehu.bum1_fx.presentation to javafx.fxml;
+    exports eus.ehu.bum1_fx.presentation;
 }
