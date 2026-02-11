@@ -1,0 +1,62 @@
+@startuml
+
+' Color definitions to match screenshot
+skinparam class {
+   BackgroundColor White
+  ' BackgroundColor LemonChiffon
+  ' BackgroundColor<<interface>> LightPink
+  ' BackgroundColor<<enum>> LightGreen
+  BorderColor Black
+}
+
+' Classes
+class CalculatorController {
+  -amountTextField
+  -fromComboBox
+  -toComboBox
+  -calculateButton
+  -resultLabel
+}
+
+class CalculatorStarter  {
+  +printValidCurrencies()
+}
+
+interface ExchangeCalculator  {
+  +getCurrencyLongNames()
+  +getChangeValue(cur1, amount, cur2)
+  +calculateCommission(amount, cur)
+}
+
+class BarcenaysCalculator {
+  +getCurrencyLongNames()
+  +getChangeValue(cur1, amount, cur2)
+  +calculateCommission(amount, cur)
+}
+
+class CommissionCalculator {
+  -amount
+  -currency
+  +calculateCommission()
+}
+
+enum Currency {
+  +longNames()
+}
+
+class ForexOperator {
+  -sourceCurrency: String
+  -amount: Float
+  -endCurrency: String
+  +getChangeValue()
+}
+
+' Relationships
+CalculatorController -> ExchangeCalculator
+CalculatorStarter -> ExchangeCalculator
+ExchangeCalculator <|-- BarcenaysCalculator
+BarcenaysCalculator ..> CommissionCalculator
+BarcenaysCalculator ..> Currency
+BarcenaysCalculator ..> ForexOperator
+
+@enduml
