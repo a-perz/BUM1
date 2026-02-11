@@ -1,0 +1,12 @@
+@startuml
+left to right direction
+actor User
+actor "Bank Service" as BS
+
+rectangle "Currency Converter App" {
+  usecase "Calculate change" as CC
+}
+
+User -- CC
+CC -- BS
+@enduml
